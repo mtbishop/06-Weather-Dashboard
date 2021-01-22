@@ -6,7 +6,7 @@ initWeather();
 
 function renderCities() {
   $("#cityList").empty();
-  $("#cityInput").val("");
+  $("#search-value").val("");
 
   for (i=0; i<cityList.length; i++) {
     var a = $("<a>");
@@ -16,6 +16,7 @@ function renderCities() {
     $("#cityList").prepend(a);
   }
 }
+
 
 function initCityList() {
   var storedCities = JSON.parse(localStorage.getItem("cities"));
@@ -27,13 +28,51 @@ function initCityList() {
   renderCities();
 }
 
-function initWeather() {
 
+function initWeather() {
+  var storedWeather = JSON.parse(localStorage.getItem("currentCity"));
+  if(storedWeather !== null) {
+    cityList = storedCities;
+  }
+  renderCities();
 }
+
 
 function storeCityArray() {
-
+  localStorage.setItem("cities", JSON.stringify(cityList));
 }
+
+
+function storeCurrentCity() {
+  localStorage.setItem("currentCity", JSON.stringify(cityname));
+}
+
+
+$("#search-button").on("click", function(event){
+  event.preventDefault();
+
+  cityname = $("#search-value").val().trim();
+  if(cityname === "") {
+    alert("Please enter a city")
+
+  }else if (cityList.length >= 5) {
+    cityList.shift();
+    cityList.push(cityname);
+  }else{
+    cityList.push(cityname);
+  }
+  storeCurrentCity();
+  storeCityArray();
+  renderCities();
+  displayWeather();
+  displayFiveDayForecast();
+});
+
+$("#search-value").keypress(function(e){
+  if (e.which === 13){
+    $("#search-button").click();
+  }
+})
 
 async function displayWeather() {
   // CURRENT WEATHER API
@@ -66,7 +105,7 @@ async function displayWeather() {
   var getLong = response.coord.lon;
   var getLat = response.coord.lat;
 
-  
+
   // UV API
   var uvURL = "http://api.openweathermap.org/data/2.5/uvi?appid=49f0c9f2f3643047ff38e9feb907e820&lat=" + getLat + "&lon=" + getLong;
   var uvResponse = await $.ajax({
@@ -82,5 +121,10 @@ async function displayFiveDayForecast () {
 }
 
 function historyDisplayWeather() {
-
+  cityname = $(this).attr("data-name");
+  displayWeather();
+  displayFiveDayForecast();
+  console.log(cityname);
 }
+
+$(document).on("click", ".city", historyDisplayWeather);
