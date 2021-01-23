@@ -31,7 +31,7 @@ function initCityList() {
 
 function initWeather() {
   var storedWeather = JSON.parse(localStorage.getItem("currentCity"));
-  
+
   if(storedWeather !== null) {
     cityname = storedWeather;
 
@@ -79,7 +79,7 @@ $("#search-value").keypress(function(e){
 
 async function displayWeather() {
   // CURRENT WEATHER API
-  var queryURL = "api.openweathermap.org/data/2.5/weather?q=" + cityname + "&units=imperial&appid=d202bea0172cc5628ace1f64febee1fe";
+  var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityname + "&units=imperial&appid=d202bea0172cc5628ace1f64febee1fe";
 
   var response = await $.ajax({
     url: queryURL,
@@ -110,7 +110,7 @@ async function displayWeather() {
 
 
   // UV API
-  var uvURL = "http://api.openweathermap.org/data/2.5/uvi?appid=49f0c9f2f3643047ff38e9feb907e820&lat=" + getLat + "&lon=" + getLong;
+  var uvURL = "https://api.openweathermap.org/data/2.5/uvi?appid=49f0c9f2f3643047ff38e9feb907e820&lat=" + getLat + "&lon=" + getLong;
   var uvResponse = await $.ajax({
     url: uvURL,
     method: "GET"
@@ -140,6 +140,13 @@ async function displayWeather() {
 
 async function displayFiveDayForecast () {
 
+  var queryURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityname + "&units=imperial&appid=e380bf05f66de537690972a12823d83f";
+
+  var response = await $.ajax({
+    url: queryURL,
+    method: "GET"
+  })
+  
 }
 
 function historyDisplayWeather() {
