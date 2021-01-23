@@ -31,10 +31,13 @@ function initCityList() {
 
 function initWeather() {
   var storedWeather = JSON.parse(localStorage.getItem("currentCity"));
+  
   if(storedWeather !== null) {
-    cityList = storedCities;
+    cityname = storedWeather;
+
+    displayWeather();
+    displayFiveDayForecast();
   }
-  renderCities();
 }
 
 
@@ -113,6 +116,25 @@ async function displayWeather() {
     method: "GET"
   })
   
+  // adds classes to UV index based on level
+  var getUVIndex = uvResponse.value;
+  var uvNumber = $("<span>");
+  if (getUVIndex > 0 && getUVIndex <= 2.99) {
+    uvNumber.addClass("low");
+  }else if(getUVIndex >= 3 && getUVIndex <= 5.99) {
+    uvNumber.addClass("moderate");
+  }else if(getUVIndex >= 6 && getUVIndex <= 7.99) {
+    uvNumber.addClass("high");
+  }else if(getUVIndex >= 8 && getUVIndex <= 10.99) {
+    uvNumber.addClass("vhigh");
+  }else{
+    uvNumber.addClass("extreme");
+  }
+  uvNumber.text(getUVIndex);
+  var uvIndexEl = $("<p class = 'card-text'>").text("UV Index: ");
+  uvNumber.appendTo(uvIndexEl);
+  currentWeatherDiv.append(uvIndexEl);
+  $("#weatherContainer").html(currentWeatherDiv);
 
 }
 
