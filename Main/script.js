@@ -50,6 +50,11 @@ function storeCurrentCity() {
   localStorage.setItem("currentCity", JSON.stringify(cityname));
 }
 
+function clearCityStorage () {
+  window.localStorage.clear();
+  location.reload();
+}
+
 
 $("#search-button").on("click", function(event){
   event.preventDefault();
@@ -146,7 +151,36 @@ async function displayFiveDayForecast () {
     url: queryURL,
     method: "GET"
   })
-  
+  var forecastDiv = $("<div id = 'fiveDayForecast'>");
+  var forecastHeader = $("<h5 class = 'card-header border-secondary'>").text("5 Day Forecast");
+  forecastDiv.append(forecastHeader);
+  var cardDeck = $("<div class = 'card-deck'>");
+  forecastDiv.append(cardDeck);
+  console.log(response);
+
+  for (i = 0; i < 5; i++) {
+    var forecastCard = $("<div class = 'card mb-3 mt-3'>");
+    var cardBody = $("<div class = 'card-body'>");
+    var date = new Date();
+    var val = (date.getMonth() + 1) + "/" + (date.getDate() + i + 1) + "/" + date.getFullYear();
+    var forecastDate = $("<h5 class = 'card-title'>").text(val);
+
+    cardBody.append(forecastDate);
+    var getCurrentWEatherIcon = response.list[i].weather[0].icon;
+    console.log(getCurrentWEatherIcon);
+    var displayWeatherIcon = $("<img src = http://openweathermap.org/img/wn/" + getCurrentWEatherIcon + ".png />");
+    cardBody.append(displayWeatherIcon);
+    var getTemp = response.list[i].main.temp;
+    var tempEl = $("<p class = 'card-text'>").text("Temp: " + getTemp + "° F");
+    cardBody.append(tempEl);
+    var getHumidity = response.list[i].main.humidity;
+    var humidityEl = $("<p class = 'card-text'>").text("Humidity: " + getHumidity + "%");
+    cardBody.append(humidityEl);
+    forecastCard.append(cardBody);
+    cardDeck.append(forecastCard);
+  }
+  $("#forecastContainer").html(forecastDiv);
+
 }
 
 function historyDisplayWeather() {
@@ -157,3 +191,4 @@ function historyDisplayWeather() {
 }
 
 $(document).on("click", ".city", historyDisplayWeather);
+$("#clearLocal").on("click", clearCityStorage);
